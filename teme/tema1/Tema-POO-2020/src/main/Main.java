@@ -71,6 +71,24 @@ public final class Main {
         JSONArray arrayResult = new JSONArray();
 
         //TODO add here the entry point to your implementation
+        Action action = new Action(input, fileWriter, arrayResult);
+        for (ActionInputData command : input.getCommands()) {
+            if (command.getActionType().equals("command")) {
+                if (command.getType().equals("favorite")) {
+                    action.setFavorite(command.getTitle(),
+                            command.getUsername(), command.getActionId());
+                }
+                if (command.getType().equals("view")) {
+                    action.setView(command.getTitle(),
+                            command.getUsername(), command.getActionId());
+                }
+                if (command.getType().equals("rating")) {
+                    action.setRating(command.getTitle(), command.getGrade(),
+                            command.getSeasonNumber(),
+                            command.getUsername(), command.getActionId());
+                }
+            }
+        }
 
         fileWriter.closeJSON(arrayResult);
     }
