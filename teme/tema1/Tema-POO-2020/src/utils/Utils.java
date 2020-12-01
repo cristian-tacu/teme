@@ -58,7 +58,7 @@ public final class Utils {
      * @param award for actors
      * @return an ActorsAwards Enum
      */
-    public static ActorsAwards stringToAwards(final String award) {
+    private static ActorsAwards stringToAwards(final String award) {
         return switch (award) {
             case "BEST_SCREENPLAY" -> ActorsAwards.BEST_SCREENPLAY;
             case "BEST_SUPPORTING_ACTOR" -> ActorsAwards.BEST_SUPPORTING_ACTOR;

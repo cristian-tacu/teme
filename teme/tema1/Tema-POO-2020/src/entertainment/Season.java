@@ -32,6 +32,10 @@ public final class Season {
         return duration;
     }
 
+    public int getCurrentSeason() {
+        return currentSeason;
+    }
+
     public void setDuration(final int duration) {
         this.duration = duration;
     }

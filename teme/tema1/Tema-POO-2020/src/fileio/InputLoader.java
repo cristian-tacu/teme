@@ -174,7 +174,7 @@ public final class InputLoader {
      * @param size
      * @return A list of actions
      */
-    public List<ActionInputData> readActions(final JSONObject jsonObject, final int size) {
+    private List<ActionInputData> readActions(final JSONObject jsonObject, final int size) {
 
         List<ActionInputData> actions = new ArrayList<>();
         JSONArray jsonActions = (JSONArray)

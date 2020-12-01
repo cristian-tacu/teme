@@ -1,2 +1,20 @@
 Starting audit...
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/entities/Video.java:41:5: Definition of 'equals()' without corresponding definition of 'hashCode()'. [EqualsHashCode]
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/entities/Video.java:130:5: Missing a Javadoc comment. [MissingJavadocMethod]
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/entities/Actor.java:15:5: Redundant 'public' modifier. [RedundantModifier]
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/entities/Action.java:3:14: Using the '.*' form of import should be avoided - fileio.*. [AvoidStarImport]
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/entities/Action.java:225:27: Parameter season should be final. [FinalParameters]
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/entities/Action.java:262:25: Parameter number should be final. [FinalParameters]
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/entities/Action.java:388:59: Parameter number should be final. [FinalParameters]
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/entities/Action.java:425:61: Parameter number should be final. [FinalParameters]
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/entities/Action.java:462:60: Parameter number should be final. [FinalParameters]
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/entities/Action.java:498:63: Parameter number should be final. [FinalParameters]
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/entities/Action.java:537:51: Parameter number should be final. [FinalParameters]
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/entities/Comparators.java:10:9: Missing a Javadoc comment. [MissingJavadocMethod]
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/entities/Comparators.java:40:9: Missing a Javadoc comment. [MissingJavadocMethod]
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/entities/Serial.java:9:5: Missing a Javadoc comment. [MissingJavadocMethod]
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/entities/Season.java:45:27: Parameter rating should be final. [FinalParameters]
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/entities/Season.java:57:34: Parameter generalRating should be final. [FinalParameters]
+[ERROR] /home/cristian_tacu/Desktop/tema 1/teme/teme/tema1/Tema-POO-2020/./src/main/Main.java:100:64: '3' is a magic number. [MagicNumber]
 Audit done.
+Checkstyle ends with 17 errors.

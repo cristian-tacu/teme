@@ -34,7 +34,7 @@ public final class Checker {
      * @return A list of queryTest objects
      * @throws IOException in case of exceptions to reading / writing
      */
-    public List<QueryTest> createQueries(final File file) throws IOException {
+    private List<QueryTest> createQueries(final File file) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(file, new TypeReference<List<QueryTest>>() {
         });
@@ -46,8 +46,8 @@ public final class Checker {
      * @param queryTests2 second query test
      * @return true if the queries have the same values
      */
-    public boolean compareQueries(final List<QueryTest> queryTests1,
-                                  final List<QueryTest> queryTests2) {
+    private boolean compareQueries(final List<QueryTest> queryTests1,
+                                   final List<QueryTest> queryTests2) {
         if (queryTests1.size() != queryTests2.size()) {
             return false;
         }
