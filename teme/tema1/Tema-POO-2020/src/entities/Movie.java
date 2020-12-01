@@ -1,55 +1,77 @@
-package Entities;
+package entities;
 
 import java.util.ArrayList;
 
-public class Movie extends Video{
-    double rating;
+public final class Movie extends Video {
+    private double rating;
 
-    public Movie(String title, int year, ArrayList<String> cast,
-                 ArrayList<String> genre, int duration,
-                 String videoType) {
+    public Movie(final String title, final int year, final ArrayList<String> cast,
+                 final ArrayList<String> genre, final int duration,
+                 final String videoType) {
         super(title, year, cast, genre);
-        this.totalDuration = duration;
-        this.videoType = videoType;
+        this.setTotalDuration(duration);
+        this.setVideoType(videoType);
     }
 
-    public Movie(Video video) {
+    private Movie(final Video video) {
         super(video);
     }
+
+    /**
+     *
+     * @return
+     */
     public Video clone() {
         return new Movie(this);
     }
 
-    public void setRating(int redundant, double rating,
-                          double redundant1) {
-        this.ratings.add(rating);
-        this.totalRating = 0;
-        for (Double aDouble : ratings) {
-            this.totalRating += aDouble;
+    /**
+     *
+     * @param redundant
+     * @param userRating
+     * @param redundant1
+     */
+    public void setRating(final int redundant, final double userRating,
+                          final double redundant1) {
+        this.getRatings().add(userRating);
+        this.setTotalRating(0);
+        for (Double aDouble : getRatings()) {
+            this.setTotalRating(this.getTotalRating() + aDouble);
         }
-        this.totalRating /= ratings.size();
+        this.setTotalRating(this.getTotalRating() / getRatings().size());
     }
-    public double setUserRating(int c, double rating) {
+
+    /**
+     *
+     * @param c
+     * @param userRating
+     * @return
+     */
+    public double setUserRating(final int c, final double userRating) {
         if (this.rating == 0) {
-            this.rating = rating;
+            this.rating = userRating;
             return this.rating;
         } else {
             return -1;
         }
     }
 
-    public int getTotalDuration() {
-        return totalDuration;
+    /**
+     *
+     * @return
+     */
+    public int getVideoTotalDuration() {
+        return getTotalDuration();
     }
 
     @Override
     public String toString() {
         return "MovieInputData{" + "title= "
-                + super.title + "year= "
-                + super.year + "duration= "
-                + totalDuration + "cast {"
-                + super.cast + " }\n"
-                + "genres {" + super.genres +" }\n "
-                + "viewCount= " + super.contorView + "\n";
+                + super.getTitle() + "year= "
+                + super.getYear() + "duration= "
+                + getTotalDuration() + "cast {"
+                + super.getCast() + " }\n"
+                + "genres {" + super.getGenres() + " }\n "
+                + "viewCount= " + super.getContorView() + "\n";
     }
 }

@@ -1,43 +1,48 @@
-package Entities;
+package entities;
 
 import java.util.ArrayList;
 
-public class Serial extends Video{
-    public int numberOfSeasons;
-    public ArrayList<Season> seasons = new ArrayList<>();
+public final class Serial extends Video {
+    private final int numberOfSeasons;
+    private ArrayList<Season> seasons = new ArrayList<>();
 
-    public int getTotalDuration() {
+    public int getVideoTotalDuration() {
         int duration = 0;
-        for(Season season : seasons) {
-            duration += season.duration;
+        for (Season season : seasons) {
+            duration += season.getDuration();
         }
-        return totalDuration = duration;
+        return setTotalDuration(duration);
     }
 
-    public Serial(String title, int year, ArrayList<String> cast,
-                 ArrayList<String> genre, int numberOfSeasons,
-                  ArrayList<entertainment.Season> seasons, String videoType) {
+    public Serial(final String title, final int year, final ArrayList<String> cast,
+                  final ArrayList<String> genre, final int numberOfSeasons,
+                  final ArrayList<entertainment.Season> seasons, final String videoType) {
         super(title, year, cast, genre);
         this.numberOfSeasons = numberOfSeasons;
         this.seasons = getSeasons(seasons);
-        this.totalDuration = getTotalDuration();
-        this.videoType = videoType;
+        this.setTotalDuration(getVideoTotalDuration());
+        this.setVideoType(videoType);
     }
 
-    public Serial(Video video) {
+    private Serial(final Video video) {
         super(video);
-        for (Season season : ((Serial)video).seasons) {
+        for (Season season : ((Serial) video).seasons) {
             this.seasons.add(new Season(season));
         }
-        this.numberOfSeasons = ((Serial)video).numberOfSeasons;
+        this.numberOfSeasons = ((Serial) video).numberOfSeasons;
     }
+
+    /**
+     *
+     * @return
+     */
     public Video clone() {
         return new Serial(this);
     }
 
 
-    public ArrayList<Season> getSeasons(
-            ArrayList<entertainment.Season> inputSeasons) {
+    private ArrayList<Season> getSeasons(
+            final ArrayList<entertainment.Season> inputSeasons) {
         ArrayList<Season> mySeasons = new ArrayList<>();
         for (entertainment.Season season : inputSeasons) {
             // constructorul pentru sezon
@@ -48,41 +53,54 @@ public class Serial extends Video{
         return mySeasons;
     }
 
-    public double setUserRating(int season, double rating){
+    /**
+     *
+     * @param season
+     * @param rating
+     * @return
+     */
+    public double setUserRating(final int season, final double rating) {
 
-        if(seasons.get(season).rating == 0) {
-            this.seasons.get(season).rating = rating;
-        }    // ratingul sezonului
-        else {
+        if (seasons.get(season).getRating() == 0) {
+            this.seasons.get(season).setRating(rating); // ratingul sezonului
+        } else {
             return -1;
         }
         return 0;
     }
-    public void setRating(int seasonNumber, double serialRating,
-                          double seasonRating) {
+
+    /**
+     *
+     * @param seasonNumber
+     * @param serialRating
+     * @param seasonRating
+     */
+    public void setRating(final int seasonNumber, final double serialRating,
+                          final double seasonRating) {
         Season mySeason = this.seasons.get(seasonNumber);
-        mySeason.seasonRatings.add(seasonRating);
+        mySeason.getSeasonRatings().add(seasonRating);
 
-        mySeason.generalRating = 0;    // resetam mediile rating-urilor
-        totalRating = 0;
+        mySeason.setGeneralRating(0);    // resetam mediile rating-urilor
+        setTotalRating(0);
 
-        for (Double aDouble : mySeason.seasonRatings) { // actualizarea rating
-            mySeason.generalRating += aDouble;          // pentru sezon
+        for (Double aDouble : mySeason.getSeasonRatings()) { // actualizarea rating
+            mySeason.setGeneralRating(mySeason.getGeneralRating() + aDouble); // pentru sezon
         }
-        mySeason.generalRating /= mySeason.seasonRatings.size();
+        mySeason.setGeneralRating(mySeason.getGeneralRating()
+                / mySeason.getSeasonRatings().size());
         for (Season season : seasons) {                 // actualizare rating
-            totalRating += season.generalRating;        // pentru serial
+            setTotalRating(getTotalRating() + season.getGeneralRating());        // pentru serial
         }
-        this.totalRating /= seasons.size();
+        this.setTotalRating(this.getTotalRating() / seasons.size());
     }
 
     @Override
     public String toString() {
         return "SerialInputData{" + " title= "
-                + super.title + " " + " year= "
-                + super.year+ " cast {"
-                + super.cast + " }\n" + " genres {"
-                + super.genres + " }\n "
+                + super.getTitle() + " " + " year= "
+                + super.getYear() + " cast {"
+                + super.getCast() + " }\n" + " genres {"
+                + super.getGenres() + " }\n "
                 + " numberSeason= " + numberOfSeasons
                 + ", seasons=" + seasons + "\n\n" + '}';
     }
