@@ -1,4 +1,4 @@
-package Entities;
+package entities;
 
 import fileio.*;
 import org.json.simple.JSONArray;
@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Action {
-    public ArrayList<Video> videos;
-    public ArrayList<Actor> actors;
-    public ArrayList<User> users;
-    public Writer fileWriter;
-    public JSONArray output;
+public final class Action {
+    private final ArrayList<Video> videos;
+    private final ArrayList<Actor> actors;
+    private final ArrayList<User> users;
+    private final Writer fileWriter;
+    private final JSONArray output;
 
-    public Action(Input input, Writer fileWriter, JSONArray output) {
+    public Action(final Input input, final Writer fileWriter, final JSONArray output) {
         this.videos = constructVideoArray(input.getMovies(), input.getSerials());
         this.actors = constructActorsArray(input.getActors());
         this.users = constructUsersArray(input.getUsers());
@@ -25,9 +25,9 @@ public class Action {
     }
 
     // creaza pe baza MovieInput si SerialInput campul videos
-    public ArrayList<Video> constructVideoArray(List<MovieInputData> movieInput,
-                                                List<SerialInputData> serialInput) {
-        ArrayList<Video> myVideos= new ArrayList<>();
+    private ArrayList<Video> constructVideoArray(final List<MovieInputData> movieInput,
+                                                 final List<SerialInputData> serialInput) {
+        ArrayList<Video> myVideos = new ArrayList<>();
         for (MovieInputData movie : movieInput) {            // adaugarea movies
             myVideos.add(new Movie(movie.getTitle(), movie.getYear(),
                     movie.getCast(), movie.getGenres(),
@@ -43,18 +43,18 @@ public class Action {
     }
     // construieste lista de videouri din filmografia unui autor
     // se afla aici deoarece are nevoie de lista de videouri
-    public ArrayList<Video> constructFilmography(
-            ArrayList<String> inputFilmography) {
+    private ArrayList<Video> constructFilmography(
+            final ArrayList<String> inputFilmography) {
         ArrayList<Video> actorVideos = new ArrayList<>();
         for (Video video : videos) {    // cauta titlul in filmography
-            if (inputFilmography.contains(video.title)) {
+            if (inputFilmography.contains(video.getTitle())) {
                 actorVideos.add(video);
             }
         }
         return actorVideos;
     }
     // construieste array-ul de actori pe baza celui din input
-    public ArrayList<Actor> constructActorsArray(List<ActorInputData> actorInput) {
+    private ArrayList<Actor> constructActorsArray(final List<ActorInputData> actorInput) {
         ArrayList<Actor> myActors = new ArrayList<>();
         for (ActorInputData actor : actorInput) {
             myActors.add(new Actor(actor.getName(),
@@ -67,11 +67,11 @@ public class Action {
 
     // construieste lista de videouri din lista de favorite data
     // se afla aici deoarece are nevoie de lista de videouri
-    public ArrayList<Video> constructFavorite(
-            ArrayList<String> inputFavorite) {
+    private ArrayList<Video> constructFavorite(
+            final ArrayList<String> inputFavorite) {
         ArrayList<Video> favoriteVideos = new ArrayList<>();
         for (Video video : videos) {    // cauta titlul in filmography
-            if (inputFavorite.contains(video.title)) {
+            if (inputFavorite.contains(video.getTitle())) {
                 favoriteVideos.add(video);
             }
         }
@@ -79,19 +79,20 @@ public class Action {
     }
 
     // construieste array-ul de useri pe baza celui din input
-    public ArrayList<User> constructUsersArray(List<UserInputData> usersInput) {
+    private ArrayList<User> constructUsersArray(final List<UserInputData> usersInput) {
         ArrayList<User> myUsers = new ArrayList<>();
         for (UserInputData user : usersInput) {
             myUsers.add(new User(user.getUsername(), user.getSubscriptionType(),
                     user.getHistory(), constructFavorite(user.getFavoriteMovies()),
                     this.videos));
             int currentIndex = myUsers.size() - 1;   // se actualizeaza si viewed
-            myUsers.get(currentIndex).setUserView(myUsers.get(currentIndex).history);
+            myUsers.get(currentIndex).setUserView(myUsers.get(currentIndex).getHistory());
             // actualizam si in lista generala de videos, numarul de view
-            for (String title : myUsers.get(currentIndex).history.keySet()) {
+            for (String title : myUsers.get(currentIndex).getHistory().keySet()) {
                 for (Video video : this.videos) {   // pentru fiecare video din general
-                    if (video.title.equals(title)) {  // creste cu numarul din history
-                        video.contorView += myUsers.get(currentIndex).history.get(title);
+                    if (video.getTitle().equals(title)) {  // creste cu numarul din history
+                        video.setContorView(video.getContorView()
+                                + myUsers.get(currentIndex).getHistory().get(title));
                         break;
                     }
                 }
@@ -101,29 +102,30 @@ public class Action {
     }
 
     // calculeaza de cate ori e favorit pentru toti utilizatorii
-    public void setInitialFavoriteCount() {
+    private void setInitialFavoriteCount() {
         for (User user : this.users) {      //sa nu razi ca vezi 3 for :))
-            for (Video favorVideo : user.favoriteVideos) {
+            for (Video favorVideo : user.getFavoriteVideos()) {
                 for (Video video : this.videos) {
-                    if (video.title.equals(favorVideo.title)) {
-                        video.contorFavorite++; // cate persoane au acel video favorit
+                    if (video.getTitle().equals(favorVideo.getTitle())) {
+                        // cate persoane au acel video favorit
+                        video.setContorFavorite(video.getContorFavorite() + 1);
                         break;
                     }
                 }
             }
         }
     }
-    public User getUser(String userName) {
+    private User getUser(final String userName) {
         User myUser;
         for (User user : this.users) {
-            if (userName.equals(user.username)) {
+            if (userName.equals(user.getUsername())) {
                 myUser = user;
                 return myUser;
             }
         }
         return null;
     }
-    public void write(int id, String title, String finish, String text){
+    private void write(final int id, final String title, final String finish, final String text) {
         try {
            this.output.add(fileWriter.writeFile(id, finish
                     + title + text));
@@ -131,28 +133,35 @@ public class Action {
             e.printStackTrace();
         }
     }
-    public void printer(int number, ArrayList<Video> videos, int id) {
-        StringBuilder List = new StringBuilder("Query result: [");
+    private void printer(final int number, final ArrayList<Video> myVideos, final int id) {
+        StringBuilder list = new StringBuilder("Query result: [");
         for (int i = 0; i < number - 1; i++) {
-            List.append(videos.get(i).title).append(", ");
+            list.append(myVideos.get(i).getTitle()).append(", ");
         }
         if (number == 0) {         // daca lista e goala
-            List.append("]");
+            list.append("]");
         } else {
-            List.append(videos.get(number - 1).title).append("]");
+            list.append(myVideos.get(number - 1).getTitle()).append("]");
         }
-        write(id, "", List.toString(), "");
+        write(id, "", list.toString(), "");
     }
 
     // commands implement
     // ---------------------setFavorite----------------------
-    public void setFavorite(String title, String userName, int id) {
+
+    /**
+     *
+     * @param title
+     * @param userName
+     * @param id
+     */
+    public void setFavorite(final String title, final String userName, final int id) {
         User myUser = this.getUser(userName);
-        for (Video video : myUser.videos) {    // cauta in videourile userului
-            if (video.title.equals(title)) { // cauta dupa titlu
-                if (myUser.viewedVideos.containsKey(video.title)) { // daca e vazut
-                    if (!myUser.favoriteVideos.contains(video)) {
-                        myUser.favoriteVideos.add(video);
+        for (Video video : myUser.getVideos()) {    // cauta in videourile userului
+            if (video.getTitle().equals(title)) { // cauta dupa titlu
+                if (myUser.getViewedVideos().containsKey(video.getTitle())) { // daca e vazut
+                    if (!myUser.getFavoriteVideos().contains(video)) {
+                        myUser.getFavoriteVideos().add(video);
                         this.write(id, title, "success -> ", " was added as favourite");
                         break;
                     } else {  // eroare, e deja; return
@@ -166,8 +175,9 @@ public class Action {
             }
         }
         for (Video video : videos) {
-            if (video.title.equals(title)) {
-                video.contorFavorite++; // cate persoane au acel video favorit
+            if (video.getTitle().equals(title)) {
+                // cate persoane au acel video favorit
+                video.setContorFavorite(video.getContorFavorite() + 1);
                 return;
             }
         }
@@ -175,43 +185,62 @@ public class Action {
     }
 
     // ---------------------setView----------------------
-    public void setView(String title, String userName, int id) {
+
+    /**
+     *
+     * @param title
+     * @param userName
+     * @param id
+     */
+    public void setView(final String title, final String userName, final int id) {
         User myUser = this.getUser(userName);
-        for (Video video : myUser.videos) {
-            if (video.title.equals(title)) { // cauta dupa titlu
-                video.contorView++;        // de cate ori a vazut user
-                myUser.viewedVideos.put(video.title, video);
+        for (Video video : myUser.getVideos()) {
+            if (video.getTitle().equals(title)) { // cauta dupa titlu
+                video.setContorView(video.getContorView() + 1);        // de cate ori a vazut user
+                myUser.getViewedVideos().put(video.getTitle(), video);
                 this.write(id, title, "success -> ",
-                        " was viewed with total views of " + video.contorView);
+                        " was viewed with total views of " + video.getContorView());
                 break;
             }
         }
         for (Video video : videos) {     // actualizez si in videos (general)
-            if (video.title.equals(title)) {
-                video.contorView++; // cate persoane au acel video vazut
+            if (video.getTitle().equals(title)) {
+                video.setContorView(video.getContorView() + 1); // cate persoane au acel video vazut
                 return;
             }
         }
     }
 
     // ---------------------setRating----------------------
-    public void setRating(String title, double rating, int season, String userName, int id) {
+
+    /**
+     *
+     * @param title
+     * @param rating
+     * @param season
+     * @param userName
+     * @param id
+     */
+    public void setRating(final String title, final double rating,
+                          int season, final String userName, final int id) {
         season--;
         User myUser = this.getUser(userName);
-        for (Video video : myUser.videos) { // cauta dupa titlu in lista lui user
-            if (video.title.equals(title)) {
-                if (myUser.viewedVideos.containsKey(video.title)) { // daca e vazut
-                    double UserRating = video.setUserRating(season, rating); // ratingul userului
-                    if (UserRating == -1) {
+        for (Video video : myUser.getVideos()) { // cauta dupa titlu in lista lui user
+            if (video.getTitle().equals(title)) {
+                if (myUser.getViewedVideos().containsKey(video.getTitle())) { // daca e vazut
+                    double userRating = video.setUserRating(season, rating); // ratingul userului
+                    if (userRating == -1) {
                         // rating a fost dat deja
                         this.write(id, title, "error -> ", " has been already rated");
                         return;
                     }
-                    this.write(id, title, "success -> ", " was rated with " + rating + " by " + myUser.username);
-                    myUser.ratingCount++;  // incrementeaza numarul de ratings dat
+                    this.write(id, title, "success -> ", " was rated with "
+                            + rating + " by " + myUser.getUsername());
+                    // incrementeaza numarul de ratings dat
+                    myUser.setRatingCount(myUser.getRatingCount() + 1);
                     for (Video generalVideo : videos) { // cauta dupa titlu in lista generala
-                        if (generalVideo.title.equals(title)) {
-                            generalVideo.setRating(season, UserRating, rating);
+                        if (generalVideo.getTitle().equals(title)) {
+                            generalVideo.setRating(season, userRating, rating);
                         } // actualizeaza ratingul general
                     }
                 } else { // nu l-a vazut
@@ -223,39 +252,54 @@ public class Action {
 
     // actor queries
     // ---------------------Average----------------------
-    public void average(int number, String type, int id) {
-        ArrayList<Actor> actors = new ArrayList<>(this.actors);
-        actors.removeIf(v -> v.getAverage() == 0);
+
+    /**
+     *
+     * @param number
+     * @param type
+     * @param id
+     */
+    public void average(int number, final String type, final int id) {
+        ArrayList<Actor> myActors = new ArrayList<>(this.actors);
+        myActors.removeIf(v -> v.getAverage() == 0);
         if (type.equals("asc")) { // sorteaza dupa media ratingurilor
-            actors.sort(new Comparators.ActorChainedComparator( // comparare dupa 2 criterii
+            myActors.sort(new Comparators.ActorChainedComparator(// comparare dupa 2 criterii
                     new Comparators.AscendComparatorAverage(),  // rating
                     new Comparators.AscendSortByName()));     // titlu
         } else {                  // descrescator
-            actors.sort(new Comparators.ActorChainedComparator( // comparare dupa 2 criterii
+            myActors.sort(new Comparators.ActorChainedComparator(// comparare dupa 2 criterii
                     new Comparators.DescendComparatorAverage(),  // rating
                     new Comparators.DescendSortByName()));
         }
         StringBuilder actorsList = new StringBuilder("Query result: [");
-        number = Math.min(number, actors.size());
+        number = Math.min(number, myActors.size());
         for (int i = 0; i < number - 1; i++) {
-            actorsList.append(actors.get(i).name).append(", ");
+            actorsList.append(myActors.get(i).getName()).append(", ");
         }
         if (number == 0) {    // daca lista e goala
             actorsList.append("]");
         } else {
-            actorsList.append(actors.get(number - 1).name).append("]");
+            actorsList.append(myActors.get(number - 1).getName()).append("]");
         }
         write(id, "", actorsList.toString(), "");
     }
 
     // ---------------------Awards----------------------
-    public ArrayList<Actor> awards(List<String> awards, String type, int id) {
+
+    /**
+     *
+     * @param awards
+     * @param type
+     * @param id
+     * @return
+     */
+    public ArrayList<Actor> awards(final List<String> awards, final String type, final int id) {
         boolean ok;
         ArrayList<Actor> awardActors = new ArrayList<>(); // cream un array
         for (Actor actor : actors) {
             ok = false;
             for (String award : awards) {
-                if (!actor.awards.containsKey(award)) {
+                if (!actor.getAwards().containsKey(award)) {
                     ok = true;
                     break; // daca unul din awards j nu se gaseste in actorul i
                 }
@@ -266,36 +310,43 @@ public class Action {
             awardActors.add(actor); // daca nu se opreste inseamna ca exista toate
         }
         if (type.equals("asc")) {
-            awardActors.sort(new Comparators.ActorChainedComparator( // comparare dupa 2 criterii
+            awardActors.sort(new Comparators.ActorChainedComparator(// comparare dupa 2 criterii
                     new Comparators.AscendComparatorAwards(),  // rating
                     new Comparators.AscendSortByName())); // crescator
         } else {
-            awardActors.sort(new Comparators.ActorChainedComparator( // comparare dupa 2 criterii
+            awardActors.sort(new Comparators.ActorChainedComparator(// comparare dupa 2 criterii
                     new Comparators.DescendComparatorAwards(),  // rating
                     new Comparators.DescendSortByName())); // descrescator
         }
         StringBuilder awardsList = new StringBuilder("Query result: [");
         for (int i = 0; i < awardActors.size() - 1; i++) {
-            awardsList.append(awardActors.get(i).name).append(", ");
+            awardsList.append(awardActors.get(i).getName()).append(", ");
         }
         if (awardActors.size() == 0) { // daca lista e goala
             awardsList.append("]");
         } else {
-            awardsList.append(awardActors.get(awardActors.size() - 1).name).append("]");
+            awardsList.append(awardActors.get(awardActors.size() - 1).getName()).append("]");
         }
         write(id, "", awardsList.toString(), "");
         return awardActors;
     }
 
     // ---------------------FilterDiscription----------------------
-    public void filterDescription(List<String> keywords, String type, int id) {
+
+    /**
+     *
+     * @param keywords
+     * @param type
+     * @param id
+     */
+    public void filterDescription(final List<String> keywords, final String type, final int id) {
         boolean ok;
         ArrayList<Actor> keyActors = new ArrayList<>(); // cream un array
         for (Actor actor : actors) {
             ok = false; // resetam verificatorul
             for (String keyword : keywords) {
                 String regex = "(?s)(?i)(.*)\\b" + keyword + "\\b(.*)";
-                if (!actor.careerDescription.matches(regex)) {
+                if (!actor.getCareerDescription().matches(regex)) {
                     ok = true; // pentru a iesi din for-uri
                     break; // daca unul din keywords j nu se gaseste in actorul i
                 }
@@ -312,37 +363,47 @@ public class Action {
         }
         StringBuilder keyList = new StringBuilder("Query result: [");
         for (int i = 0; i < keyActors.size() - 1; i++) {
-            keyList.append(keyActors.get(i).name).append(", ");
+            keyList.append(keyActors.get(i).getName()).append(", ");
         }
         if (keyActors.size() == 0) {    // daca lista e goala
             keyList.append("]");
         } else {
-            keyList.append(keyActors.get(keyActors.size() - 1).name).append("]");
+            keyList.append(keyActors.get(keyActors.size() - 1).getName()).append("]");
         }
         write(id, "", keyList.toString(), "");
     }
 
     // ------------------------video queries--------------------------
     // ---------------------Rating----------------------
-    public void rating(String type, int year, int number,
-                                   String genre, String videotype,
-                                   int id) {
+
+    /**
+     *
+     * @param type
+     * @param year
+     * @param number
+     * @param genre
+     * @param videotype
+     * @param id
+     */
+    public void rating(final String type, final int year, int number,
+                       final String genre, final String videotype,
+                       final int id) {
         ArrayList<Video> ratingVideos = new ArrayList<>(); // cream un array
         for (Video video : videos) {     // daca e film
-            if (video.videoType.equals(videotype)
-                    && video.genres.contains(genre)
+            if (video.getVideoType().equals(videotype)
+                    && video.getGenres().contains(genre)
                     // daca anul e null nu se ia in seama la criteriu
-                    && (year == 0 || video.year == year)
-                    && video.totalRating != 0) {     // cuprinde acel gen
+                    && (year == 0 || video.getYear() == year)
+                    && video.getTotalRating() != 0) {     // cuprinde acel gen
                 ratingVideos.add(video); // si e din acel an => adauga in lista
             }
         }
         if (type.equals("asc")) {
-            ratingVideos.sort(new Comparators.VideoChainedComparator( // comparare dupa 2 criterii
+            ratingVideos.sort(new Comparators.VideoChainedComparator(// comparare dupa 2 criterii
                     new Comparators.AscendComparatorRating(),  // rating
                     new Comparators.AscendSortByTitle())); // crescator
         } else {
-            ratingVideos.sort(new Comparators.VideoChainedComparator( // comparare dupa 2 criterii
+            ratingVideos.sort(new Comparators.VideoChainedComparator(// comparare dupa 2 criterii
                     new Comparators.DescendComparatorRating(),  // rating
                     new Comparators.DescendSortByTitle())); // descrescator
         }
@@ -351,25 +412,35 @@ public class Action {
     }
 
     // ---------------------Favorite----------------------
-    public void favorite(String type, int year, int number,
-                                     String genre, String videoType, int id) {
+
+    /**
+     *
+     * @param type
+     * @param year
+     * @param number
+     * @param genre
+     * @param videoType
+     * @param id
+     */
+    public void favorite(final String type, final int year, int number,
+                         final String genre, final String videoType, final int id) {
         ArrayList<Video> favoriteVideos = new ArrayList<>(); // cream un array
         for (Video video : videos) {           // pentru fiecare video
-            if (video.videoType.equals(videoType)
+            if (video.getVideoType().equals(videoType)
                     // daca genre e null nu se ia in seama la criteriu
-                    && (genre == null || video.genres.contains(genre))     // cuprinde acel gen
+                    && (genre == null || video.getGenres().contains(genre))     // cuprinde acel gen
                     // daca anul e null nu se ia in seama la criteriu
-                    && (year == 0 || video.year == year)
-                    && video.contorFavorite != 0) {     // e la favorite o data
+                    && (year == 0 || video.getYear() == year)
+                    && video.getContorFavorite() != 0) {     // e la favorite o data
                 favoriteVideos.add(video); // si e din acel an => adauga in lista
             }
         }
         if (type.equals("asc")) {
-            favoriteVideos.sort(new Comparators.VideoChainedComparator( // comparare dupa 2 criterii
+            favoriteVideos.sort(new Comparators.VideoChainedComparator(// comparare dupa 2 criterii
                     new Comparators.AscendComparatorFavorite(),  // rating
                     new Comparators.AscendSortByTitle())); // crescator
         } else {
-            favoriteVideos.sort(new Comparators.VideoChainedComparator( // comparare dupa 2 criterii
+            favoriteVideos.sort(new Comparators.VideoChainedComparator(// comparare dupa 2 criterii
                     new Comparators.DescendComparatorFavorite(),  // rating
                     new Comparators.DescendSortByTitle())); // descrescator
         }
@@ -378,24 +449,34 @@ public class Action {
     }
 
     // ---------------------Longest----------------------
-    public void longest(String type, int year, int number,
-                                    String genre, String videoType, int id) {
+
+    /**
+     *
+     * @param type
+     * @param year
+     * @param number
+     * @param genre
+     * @param videoType
+     * @param id
+     */
+    public void longest(final String type, final int year, int number,
+                        final String genre, final String videoType, final int id) {
         ArrayList<Video> longestVideos = new ArrayList<>(); // cream un array
         for (Video video : videos) {
-            if (video.videoType.equals(videoType)
+            if (video.getVideoType().equals(videoType)
                     // daca genre e null nu se ia in seama la criteriu
-                    && (genre == null || video.genres.contains(genre))
+                    && (genre == null || video.getGenres().contains(genre))
                     // daca anul e null nu se ia in seama la criteriu
-                    && (year == 0 || video.year == year)) {
+                    && (year == 0 || video.getYear() == year)) {
                 longestVideos.add(video); // si e din acel an => adauga in lista
             }
         }
         if (type.equals("asc")) {
-            longestVideos.sort(new Comparators.VideoChainedComparator( // comparare dupa 2 criterii
+            longestVideos.sort(new Comparators.VideoChainedComparator(// comparare dupa 2 criterii
                     new Comparators.AscendComparatorLongest(),  // rating
                     new Comparators.AscendSortByTitle())); // crescator
         } else {
-            longestVideos.sort(new Comparators.VideoChainedComparator( // comparare dupa 2 criterii
+            longestVideos.sort(new Comparators.VideoChainedComparator(// comparare dupa 2 criterii
                     new Comparators.DescendComparatorLongest(),  // rating
                     new Comparators.DescendSortByTitle())); // descrescator
         }
@@ -404,26 +485,38 @@ public class Action {
     }
 
     // ---------------------MostViewed----------------------
-    public void mostViewed(String type, int year, int number,
-                                       String genre, String videoType, int id) {
+
+    /**
+     *
+     * @param type
+     * @param year
+     * @param number
+     * @param genre
+     * @param videoType
+     * @param id
+     */
+    public void mostViewed(final String type, final int year, int number,
+                           final String genre, final String videoType, final int id) {
         ArrayList<Video> mostViewedVideos = new ArrayList<>(); // cream un array
         for (Video video : videos) { // pentru fiecare video
             // daca e din acel an, are acel gen, movie/serial (objectType)
-            if (video.videoType.equals(videoType)
+            if (video.getVideoType().equals(videoType)
                     // daca genre e null nu se ia in seama la criteriu
-                    && (genre == null || video.genres.contains(genre))
+                    && (genre == null || video.getGenres().contains(genre))
                     // daca anul e null nu se ia in seama la criteriu
-                    && (year == 0 || video.year == year)
-                    && video.contorView != 0) {// daca e vazut
+                    && (year == 0 || video.getYear() == year)
+                    && video.getContorView() != 0) { // daca e vazut
                 mostViewedVideos.add(video); // si e din acel an => adauga in lista
             }
         }
         if (type.equals("asc")) {
-            mostViewedVideos.sort(new Comparators.VideoChainedComparator( // comparare dupa 2 criterii
+            // comparare dupa 2 criterii
+            mostViewedVideos.sort(new Comparators.VideoChainedComparator(
                     new Comparators.AscendComparatorViewed(),  // rating
                     new Comparators.AscendSortByTitle())); // crescator
         } else {
-            mostViewedVideos.sort(new Comparators.VideoChainedComparator( // comparare dupa 2 criterii
+            // comparare dupa 2 criterii
+            mostViewedVideos.sort(new Comparators.VideoChainedComparator(
                     new Comparators.DescendComparatorViewed(),  // rating
                     new Comparators.DescendSortByTitle())); // descrescator
         }
@@ -434,44 +527,57 @@ public class Action {
 
     // user query
     // ---------------------NumberOfRating----------------------
-    public void numberOfRating(String type, int number, int id) {
+
+    /**
+     *
+     * @param type
+     * @param number
+     * @param id
+     */
+    public void numberOfRating(final String type, int number, final int id) {
         ArrayList<User> ratingUsers = new ArrayList<>(this.users); // cream un array
         for (User user : this.users) {
             ratingUsers.add(new User(user));
         }
-        ratingUsers.removeIf(v -> v.ratingCount == 0);
+        ratingUsers.removeIf(v -> v.getRatingCount() == 0);
         if (type.equals("asc")) {
-            ratingUsers.sort(new Comparators.UserChainedComparator( // comparare dupa 2 criterii
+            ratingUsers.sort(new Comparators.UserChainedComparator(// comparare dupa 2 criterii
                     new Comparators.AscendComparatorUser(),  // rating
                     new Comparators.AscendSortByUserName())); // crescator
         } else {
-            ratingUsers.sort(new Comparators.UserChainedComparator( // comparare dupa 2 criterii
+            ratingUsers.sort(new Comparators.UserChainedComparator(// comparare dupa 2 criterii
                     new Comparators.DescendComparatorUser(),  // rating
                     new Comparators.DescendSortByUserName())); // descrescator
         }
-        StringBuilder ViewedList = new StringBuilder("Query result: [");
+        StringBuilder viewedList = new StringBuilder("Query result: [");
         number = Math.min(number, ratingUsers.size());
         for (int i = 0; i < number - 1; i++) {
-            ViewedList.append(ratingUsers.get(i).username).append(", ");
+            viewedList.append(ratingUsers.get(i).getUsername()).append(", ");
         }
         if (number == 0) {             // daca lista e goala
-            ViewedList.append("]");
+            viewedList.append("]");
         } else {
-            ViewedList.append(ratingUsers.get(number - 1).username).append("]");
+            viewedList.append(ratingUsers.get(number - 1).getUsername()).append("]");
         }
-        write(id, "", ViewedList.toString(), "");
+        write(id, "", viewedList.toString(), "");
     }
 
     // premium recomandation
     //------------------PremiumFavorite------------------
-    public void premiumFavorite(String userName, int id) {
+
+    /**
+     *
+     * @param userName
+     * @param id
+     */
+    public void premiumFavorite(final String userName, final int id) {
         User user = this.getUser(userName);
-        if (user.subscriptionType.equals("PREMIUM")) {  // daca e premium
+        if (user.getSubscriptionType().equals("PREMIUM")) {  // daca e premium
             ArrayList<Video> favoriteVideo = new ArrayList<>(); // cream un array
-            for (Video userVideo : user.videos) {
-                if (userVideo.contorView == 0) { // daca nu e vazut
+            for (Video userVideo : user.getVideos()) {
+                if (userVideo.getContorView() == 0) { // daca nu e vazut
                     for (Video video : videos) { // il ia din lista generala
-                        if (video.title.equals(userVideo.title)) {
+                        if (video.getTitle().equals(userVideo.getTitle())) {
                             favoriteVideo.add(video);
                         }
                     }
@@ -479,7 +585,7 @@ public class Action {
             }
             favoriteVideo.sort(new Comparators.DescendComparatorFavorite()); // descrescator
             if (favoriteVideo.size() != 0) {
-                write(id, "", "FavoriteRecommendation result: ", favoriteVideo.get(0).title);
+                write(id, "", "FavoriteRecommendation result: ", favoriteVideo.get(0).getTitle());
             } else {
                 write(id, "", "FavoriteRecommendation cannot be applied!", "");
             }
@@ -490,48 +596,61 @@ public class Action {
         return;
     }
     // -----------------PremiumSearch------------------
-    public void premiumSearch(String userName, String genre, int id) {
+
+    /**
+     *
+     * @param userName
+     * @param genre
+     * @param id
+     */
+    public void premiumSearch(final String userName, final String genre, final int id) {
         User user = this.getUser(userName);
-        if (user.subscriptionType.equals("PREMIUM")) {
+        if (user.getSubscriptionType().equals("PREMIUM")) {
             ArrayList<Video> unseenVideos = new ArrayList<>(); // cream un array
-            for (Video userVideo : user.videos) {  // se cauta in viewed fiecare video
-                if (userVideo.contorView == 0 // daca nu e vazut
-                        && userVideo.genres.contains(genre)) { // si are acel gen
+            for (Video userVideo : user.getVideos()) {  // se cauta in viewed fiecare video
+                if (userVideo.getContorView() == 0 // daca nu e vazut
+                        && userVideo.getGenres().contains(genre)) { // si are acel gen
                     for (Video video : videos) { // il ia din lista generala
-                        if (userVideo.title.equals(video.title)) {
+                        if (userVideo.getTitle().equals(video.getTitle())) {
                             unseenVideos.add(video);
                         }
                     }
                 }
             }
-            unseenVideos.sort(new Comparators.VideoChainedComparator( // comparare dupa 2 criterii
+            unseenVideos.sort(new Comparators.VideoChainedComparator(// comparare dupa 2 criterii
                     new Comparators.AscendComparatorRating(),  // rating
                     new Comparators.AscendSortByTitle()));     // titlu
-            StringBuilder SearchList = new StringBuilder("SearchRecommendation result: [");
+            StringBuilder searchList = new StringBuilder("SearchRecommendation result: [");
             for (int i = 0; i < unseenVideos.size() - 1; i++) {
-                SearchList.append(unseenVideos.get(i).title).append(", ");
+                searchList.append(unseenVideos.get(i).getTitle()).append(", ");
             }
             if (unseenVideos.size() == 0) {   // daca lista e goala
                 write(id, "", "SearchRecommendation cannot be applied!", "");
                 return;
             } else {
-                SearchList.append(unseenVideos.get(unseenVideos.size() - 1).title).append("]");
+                searchList.append(unseenVideos.get(unseenVideos.size() - 1).getTitle()).append("]");
             }
-            write(id, "", SearchList.toString(), "");
+            write(id, "", searchList.toString(), "");
         } else {
             write(id, "", "SearchRecommendation cannot be applied!", "");
         }
     }
     // -----------------PremiumPopular------------------
-    public void premiumPopular(String userName, int id) {
+
+    /**
+     *
+     * @param userName
+     * @param id
+     */
+    public void premiumPopular(final String userName, final int id) {
         User user = this.getUser(userName);
-        if (user.subscriptionType.equals("PREMIUM")) {
+        if (user.getSubscriptionType().equals("PREMIUM")) {
             Map<String, Integer> genresMap = user.genreListConstruction(); // lista de genuri
             for (Video video : videos) { // cauta in toate videourile
-                for (String eachGenre : video.genres) {
+                for (String eachGenre : video.getGenres()) {
                     if (genresMap.containsKey(eachGenre)) {  // pentru acel gen
                         // creste numarul genului cu numarul de vizualizari ale videoului
-                        genresMap.put(eachGenre, genresMap.get(eachGenre) + video.contorView);
+                        genresMap.put(eachGenre, genresMap.get(eachGenre) + video.getContorView());
                     }
                 }
             }
@@ -544,11 +663,11 @@ public class Action {
             genreList.sort(new Comparators.DescendComparatorGenre());   // sortarea descrescatoare
 
             for (MyGenre genre : genreList) {              // pentru fiecare gen
-                for (Video video : user.videos) {              // pentru fiecare video
+                for (Video video : user.getVideos()) {              // pentru fiecare video
                     // daca nu e vazut si e de acel gen
-                    if (video.contorView == 0              // daca nu e vazut
-                            && video.genres.contains(genre.type)) { // si are genul
-                        write(id, "", "PopularRecommendation result: ", video.title);
+                    if (video.getContorView() == 0              // daca nu e vazut
+                            && video.getGenres().contains(genre.getType())) { // si are genul
+                        write(id, "", "PopularRecommendation result: ", video.getTitle());
                         return;
                     }
                 }
@@ -559,33 +678,45 @@ public class Action {
         }
     }
     // -----------------Standard------------------
-    public void standard(String userName, int id) {
+
+    /**
+     *
+     * @param userName
+     * @param id
+     */
+    public void standard(final String userName, final int id) {
         User user = this.getUser(userName);
-        for (Video userVideo : user.videos) {  // se cauta in user.videos
-            if (userVideo.contorView == 0 ) {// daca nu e vazut
-                write(id, "", "StandardRecommendation result: ", userVideo.title);
+        for (Video userVideo : user.getVideos()) {  // se cauta in user.videos
+            if (userVideo.getContorView() == 0) { // daca nu e vazut
+                write(id, "", "StandardRecommendation result: ", userVideo.getTitle());
                 return;
             }
         }
-        write(id,"", "StandardRecommendation cannot be applied!", "");
+        write(id, "", "StandardRecommendation cannot be applied!", "");
     }
     // -----------------BestUnseen------------------
-    public void bestUnseen(String userName, int id) {
+
+    /**
+     *
+     * @param userName
+     * @param id
+     */
+    public void bestUnseen(final String userName, final int id) {
         User user = this.getUser(userName);
-        ArrayList<Video> BestUnseenVideos = new ArrayList<>(); // cream un array
-        for (Video userVideo : user.videos) {  // se cauta in user.videos fiecare video
-            if (userVideo.contorView == 0 ) {// daca nu e vazut
+        ArrayList<Video> bestUnseenVideos = new ArrayList<>(); // cream un array
+        for (Video userVideo : user.getVideos()) {  // se cauta in user.videos fiecare video
+            if (userVideo.getContorView() == 0) { // daca nu e vazut
                 for (Video video : videos) { // il ia din lista generala
-                    if (userVideo.title.equals(video.title)) {
-                        BestUnseenVideos.add(video);
+                    if (userVideo.getTitle().equals(video.getTitle())) {
+                        bestUnseenVideos.add(video);
                     }
                 }
             }
         }
-        BestUnseenVideos.sort(new Comparators.DescendComparatorRating());
-        if (BestUnseenVideos.size() != 0) {
+        bestUnseenVideos.sort(new Comparators.DescendComparatorRating());
+        if (bestUnseenVideos.size() != 0) {
             write(id, "", "BestRatedUnseenRecommendation result: ",
-                    BestUnseenVideos.get(0).title);
+                    bestUnseenVideos.get(0).getTitle());
         } else {
             write(id, "", "BestRatedUnseenRecommendation cannot be applied!", "");
         }

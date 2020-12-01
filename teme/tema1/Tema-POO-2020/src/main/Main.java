@@ -1,8 +1,10 @@
 package main;
 
+import entities.Action;
 import checker.Checkstyle;
 import checker.Checker;
 import common.Constants;
+import fileio.ActionInputData;
 import fileio.Input;
 import fileio.InputLoader;
 import fileio.Writer;
@@ -88,8 +90,99 @@ public final class Main {
                             command.getUsername(), command.getActionId());
                 }
             }
+            if (command.getActionType().equals("query")) {
+                if (command.getObjectType().equals("actors")) {
+                    if (command.getCriteria().equals("average")) {
+                        action.average(command.getNumber(), command.getSortType(),
+                                command.getActionId());
+                    }
+                    if (command.getCriteria().equals("awards")) {
+                        action.awards(command.getFilters().get(3), command.getSortType(),
+                                command.getActionId());
+                    }
+                    if (command.getCriteria().equals("filter_description")) {
+                        action.filterDescription(command.getFilters().get(2),
+                                command.getSortType(), command.getActionId());
+                    }
+                }
+                if (command.getCriteria().equals("ratings")) {
+                    int yearFileter;
+                    if (command.getFilters().get(0).get(0) == null) {
+                        yearFileter = 0;
+                    } else {
+                        yearFileter = Integer.parseInt(
+                                command.getFilters().get(0).get(0));
+                    }
+                    action.rating(command.getSortType(), yearFileter,
+                            command.getNumber(), command.getFilters().get(1).get(0),
+                            command.getObjectType(), command.getActionId());
+                }
+                if (command.getCriteria().equals("favorite")) {
+                    int yearFileter;
+                    if (command.getFilters().get(0).get(0) == null) {
+                        yearFileter = 0;
+                    } else {
+                        yearFileter = Integer.parseInt(
+                                command.getFilters().get(0).get(0));
+                    }
+                    action.favorite(command.getSortType(), yearFileter,
+                            command.getNumber(), command.getFilters().get(1).get(0),
+                            command.getObjectType(), command.getActionId());
+                }
+                if (command.getCriteria().equals("longest")) {
+                    int yearFileter;
+                    if (command.getFilters().get(0).get(0) == null) {
+                        yearFileter = 0;
+                    } else {
+                        yearFileter = Integer.parseInt(
+                                command.getFilters().get(0).get(0));
+                    }
+                    action.longest(command.getSortType(), yearFileter,
+                            command.getNumber(), command.getFilters().get(1).get(0),
+                            command.getObjectType(), command.getActionId());
+                }
+                if (command.getCriteria().equals("most_viewed")) {
+                    int yearFileter;
+                    if (command.getFilters().get(0).get(0) == null) {
+                        yearFileter = 0;
+                    } else {
+                        yearFileter = Integer.parseInt(
+                                command.getFilters().get(0).get(0));
+                    }
+                    action.mostViewed(command.getSortType(), yearFileter,
+                            command.getNumber(), command.getFilters().get(1).get(0),
+                            command.getObjectType(), command.getActionId());
+                }
+                if (command.getObjectType().equals("users")
+                        && command.getCriteria().equals("num_ratings")) {
+                    action.numberOfRating(command.getSortType(),
+                            command.getNumber(),
+                            command.getActionId());
+                }
+            }
+            if (command.getActionType().equals("recommendation")) {
+                if (command.getType().equals("standard")) {
+                    action.standard(command.getUsername(),
+                            command.getActionId());
+                }
+                if (command.getType().equals("best_unseen")) {
+                    action.bestUnseen(command.getUsername(),
+                            command.getActionId());
+                }
+                if (command.getType().equals("popular")) {
+                    action.premiumPopular(command.getUsername(),
+                            command.getActionId());
+                }
+                if (command.getType().equals("favorite")) {
+                    action.premiumFavorite(command.getUsername(),
+                            command.getActionId());
+                }
+                if (command.getType().equals("search")) {
+                    action.premiumSearch(command.getUsername(),
+                            command.getGenre(), command.getActionId());
+                }
+            }
         }
-
         fileWriter.closeJSON(arrayResult);
     }
 }
