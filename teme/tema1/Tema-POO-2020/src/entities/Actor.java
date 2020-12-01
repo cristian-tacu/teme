@@ -13,29 +13,47 @@ public class Actor {
     Map<String, Integer> awards;
 
     public  Actor(String name, String careerDescription,
-                  ArrayList<Video> filmography, Map<ActorsAwards, Integer> awards) {
+                  ArrayList<Video> filmography,
+                  Map<ActorsAwards, Integer> awards) {
         this.name = name;
         this.careerDescription = careerDescription;
-        this.awards = this.ConstructAwardsMap(awards);
+        this.filmography = filmography;
+        this.awards = this.constructAwardsMap(awards);
 
     }
     // transforma Enum (ActorAwards) in String
-    public Map<String, Integer> ConstructAwardsMap(
+    public Map<String, Integer> constructAwardsMap(
             Map <ActorsAwards, Integer> map) {
         Map<String, Integer> myMap = new HashMap<>();
         for (ActorsAwards award : map.keySet()) {
-            myMap.put(award.name(), 1);
+            myMap.put(award.name(), map.get(award));
         }
         return myMap;
     }
 
     public float getAverage() {
         float average = 0;
+        int contor = 0;
         for (Video video : filmography) {
-            average += video.totalRating;
+            if (video.totalRating != 0) {
+                average += video.totalRating;
+                contor++;
+            }
         }
-        return average / filmography.size();
+        if (contor == 0) {
+            return 0;
+        }
+        return average / contor;
     }
+
+    public double getAwardsCount() {
+        int count = 0;
+        for (String award : awards.keySet()) {
+            count += awards.get(award);
+        }
+        return count;
+    }
+
     @Override
     public String toString() {
         return "ActorInputData{"

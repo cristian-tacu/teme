@@ -4,8 +4,7 @@ import java.util.ArrayList;
 
 public class Serial extends Video{
     public int numberOfSeasons;
-    public ArrayList<Season> seasons;
-    double serialRating;
+    public ArrayList<Season> seasons = new ArrayList<>();
 
     public int getTotalDuration() {
         int duration = 0;
@@ -17,24 +16,40 @@ public class Serial extends Video{
 
     public Serial(String title, int year, ArrayList<String> cast,
                  ArrayList<String> genre, int numberOfSeasons,
-                  ArrayList<entertainment.Season> seasons) {
+                  ArrayList<entertainment.Season> seasons, String videoType) {
         super(title, year, cast, genre);
         this.numberOfSeasons = numberOfSeasons;
         this.seasons = getSeasons(seasons);
         this.totalDuration = getTotalDuration();
-       // this.totalDuration =
+        this.videoType = videoType;
     }
 
-    public ArrayList<Season> getSeasons(ArrayList<entertainment.Season> inputSeasons) {
+    public Serial(Video video) {
+        super(video);
+        for (Season season : ((Serial)video).seasons) {
+            this.seasons.add(new Season(season));
+        }
+        this.numberOfSeasons = ((Serial)video).numberOfSeasons;
+    }
+    public Video clone() {
+        return new Serial(this);
+    }
+
+
+    public ArrayList<Season> getSeasons(
+            ArrayList<entertainment.Season> inputSeasons) {
         ArrayList<Season> mySeasons = new ArrayList<>();
         for (entertainment.Season season : inputSeasons) {
-            mySeasons.add(new Season(season.getCurrentSeason(), season.getDuration(),
-                    season.getRatings()));             // constructorul pentru sezon
+            // constructorul pentru sezon
+            mySeasons.add(new Season(season.getCurrentSeason(),
+                    season.getDuration(),
+                    season.getRatings()));
         }
         return mySeasons;
     }
 
     public double setUserRating(int season, double rating){
+
         if(seasons.get(season).rating == 0) {
             this.seasons.get(season).rating = rating;
         }    // ratingul sezonului
@@ -43,7 +58,8 @@ public class Serial extends Video{
         }
         return 0;
     }
-    public void setRating(int seasonNumber, double serialRating, double seasonRating) {
+    public void setRating(int seasonNumber, double serialRating,
+                          double seasonRating) {
         Season mySeason = this.seasons.get(seasonNumber);
         mySeason.seasonRatings.add(seasonRating);
 

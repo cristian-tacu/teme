@@ -1,15 +1,13 @@
 package Entities;
-
-public class myGenre {
+public class MyGenre {
     String type;
     int count;
 
-    public myGenre(String type) {
+    public MyGenre(String type) {
         this.type = type;
         this.count = 0;
     }
-
-    public myGenre(String type, int count) {
+    public MyGenre(String type, int count) {
         this.type = type;
         this.count = count;
     }

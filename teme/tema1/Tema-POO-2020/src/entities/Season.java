@@ -9,10 +9,19 @@ public class Season {
     List<Double> seasonRatings;
     double generalRating = 0;
 
-    public Season(int currentSeason, int duration, List<Double> seasonRatings) {
+    public Season(int currentSeason, int duration,
+                  List<Double> seasonRatings) {
         this.currentSeason = currentSeason;
         this.duration = duration;
         this.seasonRatings = seasonRatings;
+    }
+
+    public Season(Season season) {
+        this.currentSeason = season.currentSeason;
+        this.duration = season.duration;
+        this.seasonRatings = season.seasonRatings;
+        this.generalRating = season.generalRating;
+        this.rating = season.rating;
     }
 
     @Override
