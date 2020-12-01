@@ -1,38 +1,122 @@
-Object Oriented Programming Course
-Homework - VideosDB
+Tacu Ionut Cristian 323CA
 
-November 2020
+	Pentru aceasta tema am construit urmatoarele clase: 
+   - Action, unde sunt implementate actiunile;
+   - Video, clasa abstracta pe baza caruia vor fi implementate Movie si Serial;
+   - Movie, reprezinta filmele;
+   - Serial, reprezinta serialele;
+   - Season, reprezinta sezoanele;
+   - User, reprezinta utilizatorii;
+   - Actor, reprezinta actorii;
+   - Comparators, unde se gasesc metodele pentru comparatii;
+   - myGenre, o clasa ce retine un gen si numarul total de vizualizari ale tuturor video-urilor de acel gen.
 
-# Info
-https://ocw.cs.pub.ro/courses/poo-ca-cd/teme/tema
+		In clasa Action se regasesc campurile :
+   - videos, care reprezinta un array de video-uri cu date generale venite din partea tuturor utilizatorilor;
+   - actors, care reprezinta actorii pe baza clasei Actor;
+   - users, care reprezinta utilizatorii, pe baza clasei User;
+   - fileWriter si output pentru scriere in fisier;
 
-# About the code
+		In clasa User, pe langa campurile date se ragesesc:
+   - viewedVideos, ce reprezinta o mapa in care se regasesc videourile vizualitate;
+   - favoriteVideos, ce este un array de Video, construit pe baza celui din input;
+   - videos, ce reprezinta o clona a video-urilor generale. Fiecare user retine lista de video-uri cu datale personale (de cate ori au fost vazute de user, rating-ul dat de el).
+	   Metode in clasa User:
+      - setGenreMap este o functie ce construieste mapa de genuri (tip si numarul de vizualizari) pe baza unui array de String de genuri.
+      - genreListConstruction este o functie ce creeaza array-ul de genuri folosit in setGenreMap
+      - setUserView este o functie ce creeaza campul viewedVideos pe baza filmografiei
+	
+		In clasa Video pe langa campurile date se regasesc:
+   - videoType = tipul videoului (movie sau serial);
+   - totalRating = rating-ul;
+   - totalDuration = reprezentand durata;
+   - contorView = de cate ori a fost vazut
+   - contorFavorite = de cate ori este dat ca favorit
+   - ratings = un array ce retine rating-urile date, pe baza carora se reactualizeaza rating-ul (media).
+	   Metode in clasa Video:
+      - se suprascrie metoda equals, pentru a compara pe baza titlului videoului
+      - metode abstracte: setRating, setUserRating, getTotalDuration, clone
 
-We provide the input tests, the logic that parses them and the checker that runs them.
+		In clasa, Movie, pe langa Video se regaseste campul rating, folosit in realizarea comenzii de setUserRating (cand userul da rating)
+	   Metode in clasa Movie:
+      - clone: returneaza un nou movie pe baza unui alt movie
+      - setRating: calculeaza rating-ul general al filmului
+      - setUserRating: ofera rating filmului (de catre user)
+      - getTotalDuration: returneaza durata filmului
 
-* test_db - contains the tests in JSON format
-* src
-   * checker - the checker's sources including the checkstyle necessary files, not to be modified
-   * fileio - classes for parsing the input files, not to be modified
-   * common, utils
-        * contain utility classes with constants and static methods
-        * you can add your own functionality in the existing classes or add new classes as well
-   * actor
-        * contains an enum for the types of awards an actor can have - do not modify it
-        * you can add here your actor related classes
-   * entertainment
-        * contains an enum for the supported video genres - do not modify it
-        * class for representing a Season of a tv show - do not modify it
-        * you can add here your entertainment related classes
+		In clasa Serial, pe langa Video se regasesc:
+   - numberOfSeasons = numarul de sezoane;
+   - seasons = array de sezoane.
+	   Metode in clasa Serial:
+      - clone: returneaza un nou serial pe baza unui alt serial
+      - setRating: calculeaza rating-ul general al serialului.
+        Acest lucre se realizeaza prin calcularea ratingului
+        general pe sezon(generalRating) si apoi media sezoanelor
+        (totalRaing).
+      - setUserRating: ofera rating filmului (de catre user)
+      - getTotalDuration: returneaza durata serialului facand
+        suma dintre duratele tuturor sezoanelor
+      - getSeasons: construieste pe baza sezoanelor din input,
+        array-ul de sezoane specific structurii Season din entities
 
-We encourage you to organize your implementation in packages based on the functionality their classes offer. Try to keep
-your code modular, readable and documented.
+		In clasa Season, pe langa campurile date se ragasesc:
+   - rating = ratingul dat de user pentru sezon;
+   - seasonRatings = o lista de rating-uri date de toti utilizatorii;
+   - generalRating = media rating-urilor din seasonRating.
 
-# Testing
+		In clasa Actor, se regasesc:
+   - numele, cariera;
+   - filmografy = un array de Video, construit pe baza celui de String din input, reprezentand filmele in care a jucat;
+   - awards = o mapa avand key:tipul de premiu si value:de cate ori il are.
+	   Metode in clasa Actor:
+      - ConstructAwardsMap: construieste campul -awards- ca mapa, pe baza mapei din input ( Map(ActorsAwards, Integer) => Map(String, Integer) ) 
+      - getAverage: calculeaza media tuturor rating-urilor videourilor in care joaca acel actor, folosit in comparator
+      - getAwardsCount: calculeaza totalul de premii din toate domeniile, folosit in comparator
 
-The Main class runs the checker on your implementation. Add the entry point to your implementation in it.
+		In clasa Comparators se regasesc diferite metode de comparare in functie de tipul de sortare dorita.
+		In clasa myGenre se ragaesc campurile:
+   - type = tipul genului;
+   - count = numarul de vizualizari ale genului
 
-Run Main to test your implementation from the IDE or from command line.
+		Metode pregatitoare pentru constructorul Action:
+	- ConstructVideoArray: creeaza array-ul -videos- pe baza datelor din input. Se lipesc intr-un singur array filmele si serialele, initiate si ele de asemenea prin constructorii din clasele respective;
+	- ConstructFilmography: cauta in lista de videos din Action pe baza titlurilor, si creeaza array-ul de video pentru filmografie;
+	- ConstructActorsArray: creeaza array-ul -actors- cu ajutorul constructorului din Actor, pe baza datelor din input;
+	- ConstructFavorite: creeaza array-ul -favoriteVideos- cu ajutorul array-ului(String) dat in input, pe baza -videos- din Action;
+	- ConstructUsersArray: creeaza array-ul -users- cu ajutorul constructorului din User, pe baza datelor din input. Apoi se aplica functia setUserView pe baza datelor din history pentru seta numarul de vizualizari. In final se seteaza si in campul -videos- general (din Action) numarul de vizualizari. ;
+	- setInitalFavoriteCount: seteaza videourile favorite pe baza array-ului de favorite din input;
+	- getUser: cauta dupa userName in lista de -users- si returneaza un obiect de clasa User;
+	- write: foloseste fileWriter pentru a scrie in fisier
+	- printer: Se construieste un StringBuilder pe baza unui array. Se afiseaza cate videouri sunt cerute sau cate exista in lista in cazul in care -number- este mai mare.
 
-Run the main method from Test class with the name of the input file from the command line and the result will be written
-to the out.txt file. Thus, you can compare this result with ref.
+		Metodele pentru actiuni:
+
+	      Metode pentru comenzi:
+	- setFavorite: Se cauta in lista -user.videos- dupa titlu, se verifica daca este vazut videoul si daca nu este deja in favorite. Daca nu este deja in lista de favorite il adauga cu succes, daca exista nu il va aduga. Daca nu este vazut, va afisa eroare ca nu a fost vazut. In final se creste contotul in -videos- general pentru a se retine cate perosane au acel video la favorite.
+	- setView: Se cauta in lista -user.videos- dupa titlu, si creste contorul de view pentru acel user. In final se creste contorul si in lista -vdieos- general pentru a se retine de cate ori a fost vazut de toti utilizatorii
+	- setRating: Se cauta dupa titlu in lista -user.video-, se verifica daca a fost vazut si se seteaza pentru user ratingul daca nu a dat. Apoi se incrementeaza numarul de rating-uri dat de user in general. In final, se actualizeaza in -videos- prin metoda setRating, -totalRating- pentru acel video.
+	      Metode pentru queries:
+	    Metode pentru acotri:
+	- Average: se creeaza un nou array pe baza campului -actors- si se elimina cei care au media ratingului din filmografie egala cu 0. Se sorteaza in functie de tipul ales si apoi se construieste un StringBuilder pe baza array-ului obtinut. Se afiseaza cati actori sunt ceruti sau cati exista in lista in cazul in care -number- este mai mare.
+	- Awards: se creeaza un nou array, cautand daca un actor are toate premiile cerute in -awards-. Se sorteaza in functie de tipul ales si apoi se construieste un StringBuilder pe baza array-ului obtinut. Se afiseaza cati actori sunt ceruti sau cati exista in lista in cazul in care -number- este mai mare.
+	- FilterDescription: se creeaza un nou array, cautand daca un actor are toate keywords-urile cerute in -careerDescription-. Se sorteaza in functie de tipul ales si apoi se construieste un StringBuilder pe baza array-ului obtinut. Se afiseaza cati actori sunt ceruti sau cati exista in lista in cazul in care -number- este mai mare.
+
+	    Metode pentru videouri:
+	- Rating: Se creeaza un array de videouri, cautand daca videoul are acel gen, este din acel an, nu are rating 0 si e de acel videoType(movie/serial). Se sorteaza in functie de tipul ales(asc, desc - dupa rating) si apoi se construieste un StringBuilder pe baza array-ului obtinut. Se afiseaza cate videouri sunt cerute sau cate exista in lista in cazul in care -number- este mai mare.
+	- Favorite: Se creeaza un array de videouri, cautand daca videoul are acel gen, este din acel an, e la favorite cel putin o data si e de acel videoType(movie/serial). Se sorteaza in functie de tipul ales(asc, desc - in funcie de countFavorite al videoului) si apoi se construieste un StringBuilder pe baza array-ului obtinut. Se afiseaza cate videouri sunt cerute sau cate exista in lista in cazul in care -number- este mai mare.
+	- Longest: Se creeaza un array de videouri, cautand daca videoul are acel gen, este din acel an si e de acel videoType(movie/serial). Se sorteaza in functie de tipul ales(asc, desc - dupa lungime) si apoi se construieste un StringBuilder pe baza array-ului obtinut. Se afiseaza cate videouri sunt cerute sau cate exista in lista in cazul in care -number- este mai mare.
+	- MostViewed: Se creeaza un array de videouri, cautand daca videoul are acel gen, este din acel an si e de acel videoType(movie/serial). Se sorteaza in functie de tipul ales(asc, desc - dupa numarul de vizualizari) si apoi se construieste un StringBuilder pe baza array-ului obtinut. Se afiseaza cate videouri sunt cerute sau cate exista in lista in cazul in care -number- este mai mare.
+	    Metode pentru utilizatori:
+	- NumberOfRating: Creeaza un array de utilizatori dupa cel din -users- si ii elimina pe cei care nu au dat rating deloc. Se sorteaza in functie de tipul ales(asc, desc - in funcie de ratingCount si nume) si apoi se construieste un StringBuilder pe baza array-ului obtinut. Se afiseaza cati utilizatori sunt ceruti sau cati exista in lista in cazul in care -number- este mai mare.
+		
+		Metode pentru recomandari:
+	      Metode pentru utilizatorii Premium:
+	- PremiumFavorite: Se creeaza un array cautand in -user.videos- daca este vazut videoul de user. Apoi este luat acel video cu ajutorul titlului din -videos- general, deoarece acolo sunt retinute datele generale. Se sorteaza descrescator (in funcie de contorFavorite) si apoi se afiseaza primul din array. Daca utilizatorul nu e premium nu poate poate aplica actiunea.
+	- PremiumSearch: Se creeaza un array cautand in -user.videos- daca este vazut videoul de user si are acel gen. Apoi este luat acel video pe baza titlului din -videos- general, deoarece acolo sunt retinute datele generale. Se sorteaza crescator (dupa rating) si apoi se construieste un StringBuilder pe baza array-ului obtinut. Se afiseaza toate videourile din unseenVideos.
+	- PremiumPopular: Se construieste o mapa Map(gen, viewCounGen). Pentru fiecare gen din fiecare video din -videos-, se aduna numarul de vizualizari ale videoului pentru acel gen. Cu ajutorul clasei myGenre, se creeaza un array de myGenre, pentru a retine tipul genului si de cate ori e vazut. Acest array este sortat descrescator, in functie de numarul de vizualizari ale genurilor. Dupa sortare, pentru fiecare gen, se verifica fiecare video din -user.video- daca e vazut si daca e de acel gen. Se opreste la primul video ce satisface aceste conditii si il afiseaza.
+	      Metode pentru toti utilizatorii:
+	- Standard: Se cauta in lista acelui utilizator primul video care nu este vazut si il afiseaza.
+	- Best_Unseen: Se creeaza un array de videouri cautand in -user.videos- ce videouri nu au fost vazute de utilizator. Aceste videori sunt luate pe baza titlului din -videos- general si adaugate in array. Se sorteaza array-ul descrescator in functie de rating si se afiseaza primul element.
+	
+https://github.com/cristian-tacu/teme/tree/tema1-2020/
+
