@@ -1,0 +1,142 @@
+Tacu Ionut Cristian 323 CA
+
+		Pentru aceasta etapa de proiect am construit
+ urmatoarele clase:
+	Pentru inputinfo:
+   - Data, ce contine toate informatiile din input
+   - CostChange, ce contine informatiile primite referitoare
+ la schimbarile costurilor
+   - InitialInputData, ce contine listele de consumatori si
+ distribuitori initiali
+   - MonthlyUpdate, ce contine noii consumatori si schimbarile
+ de costuri
+
+	Pentru outputinfo:
+   - OutputConsumer, ce contine informatiile consumatorilor
+ la output
+   - OutputDistributor, ce contine informatiile
+ distribuitorilor la output
+
+	Pentru rezolvarea problemei:
+   - BaseCenter, unde sunt implementate functiile pentru
+ desfasurarea jocului pe luni
+   - Consumer, ce reprezinta clasa consumatorului
+   - Distributor, ce reprezinta clasa distribuitorului
+   - Contract, ce reprezinta structura contractului
+
+		In clasa BaseCenter se regasesc urmatoarele
+ campuri:
+	- numberOfTurns = numarul de runde
+	- consumers = mapa consumatorilor
+	- distributors = mapa distribuitorilor
+	- monthlyUpdates = lista de noi consumatori si
+ schimbarile costurilor
+	- bestOption = distribuitorul cu cel mai bun pret
+
+		In clasa Consumer se regasesc urmatoarele campuri
+ pe langa cele date:
+	- distributorId = id-ul distribuitorului curent
+	- oldDistributorId = id-ul distribuitorului de runda
+ trecuta
+	- due = valoarea facturii curente
+	- oldDue = valoare facturii de luna trecuta
+	- restant = verificator de datorie
+	- contractLenght = cate luni mai are din contract
+
+		In clasa Distributor se regasesc urmatoarele
+ campuri pe langa cele date:
+	- budget = bugetul
+	- isBankrupt = verificator de faliment
+	- contractPrice = pretul contractului
+	- contract = o mapa de contracte cu cheia id-ul
+ consumatorului, si valoarea Contract
+	    Metode in clasa Distributor:
+	- costUpdate: se actualizeaza costurile de infrastructura
+ si productie
+	- getPriceOfContract: calculeaza pretul contractului
+	- exctractProfite: calcularea profitului
+	- budgetUpdate: actualizarea bugetului, scazand costurile
+	- insertContract: adaugarea contractului cu consumatorul dat
+
+		In clasa Contract se regasesc campurile:
+	- consumerId = id-ul consumatorului
+	- price = valoarea facturii
+	- remainedContractMonths = numarul de Contracte ramase
+
+		
+		Pentru citire, am creat clase care contin campurile
+ aferente datelor din fisierele Json. Toate aceste date sunt
+ colectate in clasa Data, care contine toate informatiile de input.
+
+		Pentru afisare, am creat clase care contin campurile
+ ce trebuie afisate la final : OutputConsumer si OutputDistributor.
+ Acestea sunt plasate intr-o clasa numita OutputData, ce contine
+ o lista de consumatori si o lista de distribuitori.
+
+		Pentru parcurgerea jocului sunt folosite 2 metode
+ din clasa BaseCenter: firstRound si theGame.
+	1) firstRound : In aceasta metode se calculeaza urmatoarele:
+    - contractCost : se calculeaza preturile contractelor pe baza
+ costurilor de infrastructura si numarul de clienti
+
+    - getBestOffert : Se cauta distribuitorul cu pretul contractului
+ cel mai mic
+
+    - getConsumerVenue : Toti consumatori primesc salariul 
+
+    - contractPick : Consumatorii aleg contractele, acestea fiind cu
+
+ pretul cel mai mic. In aceasta metoda se retine si distribuitorul de
+ luna trecuta impreuna cu pretul contractului. Apoi se seteaza datele
+ pentru distribuitorul curent (id, pret, numarul de luni).
+ In cazul in care nu alege contract nou, doar se actualizeaza
+ id-ul si pretul contractului distribuitorului curent.
+
+    - billPayment : Pentru inceput se fac shortcut-uri pentru anumite
+ variabile. Exista mai multe cazuri:
+  a) daca are destui bani si nu e restant, plateste factura
+  b) daca are destui bani, este restant, dar distribuitorul
+ de luna trecuta a dat faliment, scapa de contractul trecut.
+  c) daca are destui bani sa plateasca si factura curenta si
+ cea restanta, le plateste si intra si in contul distribuitorilor
+  d) daca nu are destui bani si nu e restant, devine restant
+  e) daca nu are destui bani si e restant, este scos din joc
+
+    - distributorPayment : distribuitorii platesc taxele pentru
+ infrastructura si productie daca nu au falimentat
+
+	2) theGame : Sunt explicate doar cele care nu se regasesc in
+ firstRound. In aceasta metoda se realizeaza urmatoarele :
+    - insertNewConsumers : Sunt introdusi in lista consumatorilor, noii
+ consumatori pe baza listelor din input (monthlyUpdate)
+
+    - changeDistributorCost : Sunt actualizate costurile de
+ infrastructura si productie pentru distribuitori
+
+    - removeBankruptConsumers : Sunt exclusi consumatorii care au 
+falimentat inainte de a se calcula noile contracte
+
+    - contractCost : se calculeaza preturile contractelor
+
+    - removeFinishContract : Sunt exclusi consumatorii care au terminat
+ contractul dupa ce se calculeaza noile contracte ale distribuitorilor.
+
+    - getBestOffert : 
+    - getConsumerVenue : 
+    - contractPick : 
+    - billPayment :
+    - distributorPayment :
+
+		Pentru folosirea patern-ului Singleton, am avut in vedere
+ crearea clasei BaseCenter. Am creat metoda getInstance, folosita pentru
+ aplicarea metodei ce tine loc de constructor. Aceasta este folosita in
+ clasa Main.
+		Pentru folosirea patern-ului Factory, am avut in vedere
+ crearea claselor de output.
+	Pe baza interfetei OutputMember sunt implementate clasele
+ OutputConsumer si OutputDistributor. Clasa OutputFactory, contine
+ metoda de initializare a unui membru, fie el consumator sau distribuitor.
+ In clasa main se foloseste un generator, care aplica constructorul
+ necesar situatiei respective. Acesta este folosit cand sunt construite
+ array-urile de consumatori si distribuitori de output.
+	 

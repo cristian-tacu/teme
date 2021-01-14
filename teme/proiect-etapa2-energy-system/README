@@ -1,0 +1,175 @@
+Tacu Ionut Cristian 323 CA
+
+	Pentru a nu ingreuna acest README, am scris doar
+ ce am modificat si ce am adaugat in proiect. Am atasat
+ in arhiva si vechiul README(OLDREADME) daca sunt necesare informatii
+ din etapa precedenta.
+
+		Pentru aceasta etapa de proiect am
+ construit/modificat urmatoarele clase:
+
+	Pentru inputinfo:
+   - CostChange, nu mai contine costul de productie
+   - InitialInputData, ce contine listele de consumatori si
+ distribuitori initiali la care se adauga producatorii
+   - MonthlyUpdate, ce contine noii consumatori si schimbarile
+ de costuri, la care se adauga schimbarile producatorilor
+   - ProducerChange, ce contine schimbarile producatorilor
+
+	Pentru outputinfo:
+   - OutputProducer, ce contine informatiile
+ producatorilor la output
+
+	Pentru rezolvarea problemei:
+   - BaseCenter, unde sunt implementate functiile pentru
+ desfasurarea jocului pe luni
+   - Consumer, ce reprezinta clasa consumatorului
+   - Distributor, ce reprezinta clasa distribuitorului
+   - Producer, ce reprezinta clasa producatorului
+   - Contract, ce reprezinta structura contractului
+   - EnergyDealer, ce reprezinta clasa ce contine datele
+ despre alegerea unui distribuitor a producatorilor
+   - MonthlyStat, ce contine lista de distribuitori
+ ai unui producator pe o anumita luna
+   - Comparators, ce reprezinta clasa ce contine comparatorii
+ pentru alegerea producatorilor in functie de strategie
+   - pachetul strategies pe care il voi prezenta la final
+
+		In clasa BaseCenter se regasesc aceleasi
+ campuri la carre se adauga:
+	- producers: lista generala de producatori
+		In clasa Consumer se regasesc aceleasi campuri.
+
+		In clasa Distributor se regasesc urmatoarele
+ campuri pe langa cele din prima etapa:
+	- energyNeededKW: energia necesara
+	- producerStrategy: strategia de alegere a producatorilor
+	- producers: producatorii la care se afla distribuitorul
+
+	    Metode adaugate in clasa Distributor:
+	- costUpdate: se actualizeaza doar costurile de infrastructura
+	- productionCostUpdate: se calculeaza costul de productie pe
+ baza informatiilor producatorilor de la care preia energie
+	
+		In clasa Producer se regasesc urmatoarele
+ campuri :
+	- id: id-ul producatorului
+	- energyType: tipul de energie oferit
+	- energyCode:
+	- maxDistributors: numarul maxim de distribuitori
+	- numberOfDistributor: numarul curent de distribuitori
+	- priceKW: pretul pe KW
+	- energyPerDistributor: energia oferita pentru un distribuitor
+	- oldEnergyPerDistributor: energia oferita pe luna trecuta
+	- monthlyStats: listele distribuitorilor pe fiecare luna
+	
+	    Metode din clasa Producer:
+	- energyUpdate: se actualizeaza energia oferita per distribuitor
+	- setEnergyCode: Seteaza un anumit cod in functie
+ de regenerabilitate (A este regenerabil, B nu este regenerabil)
+
+		In clasa Contract se regasesc aceleasi campuri
+		In clasa EnergyDealer se regasesc urmatoarele campuri:
+	- month: luna aferenta schimbarii producatorilor
+ ai unui distribuitor
+	- distribuitor: distribuitorul care isi realege producatorii
+	- producers: lista cu toti producatorii
+ din care vor alege distribuitorii
+	- generator: genereaza modul de alegere al producatorilor
+ in functie de strategie
+
+		In clasa MonthlyStat se regasesc urmatoarele campuri:
+	- month: luna curenta
+	- distributorsIds: lista cu id-urile distribuitorilor
+ unui producator
+
+		In clasa Comparators se regasesc urmatorii comparatori:
+	- AscendComparatorId: compara in functie de Id
+	- DescendComparatorQuantity: compara descrescator 
+in functie de cantitate
+	- AscendComparatorPrice: compara in functie de Pret
+	- AscendSortGreen: compara in functie de regenerabilitate
+	 
+	
+		Pentru citire, am creat clase care contin campurile
+ aferente datelor din fisierele Json. Toate aceste date sunt
+ colectate in clasa Data, care contine toate informatiile de input.
+
+		Pentru afisare, am creat clase care contin campurile
+ ce trebuie afisate la final : OutputConsumer, OutputDistributor
+ la care s-a adaugat OutputProducer.
+ Acestea sunt plasate intr-o clasa numita OutputData, ce contine
+ o lista de consumatori,o lista de distribuitori si una de producatori.
+
+		Pentru parcurgerea jocului sunt folosite 2 metode
+ din clasa BaseCenter: firstRound si theGame.
+	1) firstRound : In aceasta metoda se afla urmatoarele:
+    - newMonthlyStatsForProducers: creeaza lista de distribuitori
+ a producatorilor in functie de luna
+    - firstRoundProdcerPick: se aleg pentru runda initiala
+ producatorii de catre distribuitori
+
+    - contractCost: nu se modifica
+    - getBestOffert: nu se modifica
+    - getConsumerVenue: nu se modifica
+    - contractPick: nu se modifica
+    - billPayment :Pentru aceasta functie unul dintre cazuri
+ s-a rupt in 2 situatii:
+	#Inainte :   daca are destui bani sa plateasca si factura curenta
+ si cea restanta, le plateste si intra si in contul distribuitorilor
+	#Dupa :      - daca e restant si nu schimba distribuitorul,
+ plateste factura plus penalitati
+	             - daca e restant si schimba distribuitorul,
+ plateste factura si amana urmatoarea factura
+    - distributorPayment : nu se modifica
+
+	2) theGame : Sunt explicate doar cele care nu se regasesc in
+ firstRound. In aceasta metoda se realizeaza urmatoarele :
+    - insertNewConsumers: nu se modifica
+    - changeDistributorCost: nu se modifica
+    - removeBankruptConsumers: nu se modifica
+    - contractCost: nu se modifica
+    - removeFinishContract: nu se modifica
+    - getBestOffert: nu se modifica
+    - getConsumerVenue:  nu se modifica
+    - contractPick:  nu se modifica
+    - billPayment:  nu se modifica
+    - distributorPayment:  nu se modifica
+
+    - newMonthlyStatsForProducers: creeaza lista de distribuitori
+ a producatorilor in functie de luna
+
+    - changeProducerDistribution: se schimba valorile de
+ enrgie distribuita a producatorilor 
+
+    - producerPick: se verifica pentru fiecare distribuitor daca unul
+ dintre producatorii sai au chimbat valorile. Daca a schimbat,
+ se elimina atat distribuitorul din listele producatorilor,
+ cat si producatorii din lista distribuitorului. Apoi se aplica
+ strategiile pe baza observer-ului.
+
+
+	Pentru folosirea patern-ului Strategy am creat 
+ interfata PickStrategy, iar clasele Green Strategy, PriceStrategy
+ si QuantityStrategy o implementeaza.
+	In functie de strategie sunt utilizati comparatorii
+ corespunzatori pentru sortarea unei liste ce contine toti producatorii.
+	In cadrul acestor strategii, se aleg producatorii de catre
+ distribuitor, dupa care se adauga producatorul in lista distribuitorului
+ si distribuitorul in lista de distribuitori ai producatorului. La final
+ se creste numarul curent de distribuitori ai producatorului.
+	Strategiile sunt create pe baza StrategyFactory.
+ Acesta foloseste campul producerStrategy al distribuitorului si creeaza
+ strategia necesara alegerii producatorilor.
+	De asemenea strategiile primesc: distribuitorul ce va realege
+ producatorii, lista totala de producatori si luna in care se afla.
+
+	Pentru folosirea patern-ului Observer am folosit clasa BaseCener
+ ca Observable si EnergyDealer ca Observer.
+	In momentul in care se realizeaza o schimbare la un producator
+ acesta anunta observatorul EnergyDealer pentru a realiza noile alegeri.
+	In metoda update a observatorului se genereaza strategia pe baza
+ factory-ului, apoi se apeleaza metoda pickBestProducers, avand strategia
+ necesara distribuitorului.
+
+	

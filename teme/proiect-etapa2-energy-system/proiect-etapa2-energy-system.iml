@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Downloads/jackson-databind-2.9.7.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/jackson-core-2.9.7.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/jackson-annotations-2.9.7.jar!/" />
+          <root url="file://$USER_HOME$/Downloads" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$USER_HOME$/Downloads" />
+          <root url="file://$USER_HOME$/Downloads/commons-lang3-3.11-src/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/commons-lang3-3.11-src/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/lab-visitor-skel/src" />
+        </SOURCES>
+        <jarDirectory url="file://$USER_HOME$/Downloads" recursive="false" />
+        <jarDirectory url="file://$USER_HOME$/Downloads" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+  </component>
+</module>
